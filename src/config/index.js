@@ -24,6 +24,8 @@ const EnvConfig = {
   },
 }
 export default {
+  // 命名空间
+  namespace: "manager",
   env,
   // 全部访问mock地址
   mock: true,

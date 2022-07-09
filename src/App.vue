@@ -5,7 +5,13 @@
 </template>
 
 <script>
-  export default {}
+  export default {
+    mounted() {
+      // this.$storage.setItem("name", "zsd")
+      // console.log(this.$storage.getItem("name"))
+      this.$storage.clearItem("age")
+    },
+  }
 </script>
 
 <style></style>
