@@ -11,13 +11,19 @@ const routes = [
     children: [
       {
         path: "/welcome",
-        component: () => import("./../components/Welcome.vue"),
-      },
-      {
-        path: "/login",
-        component: () => import("./../components/Login.vue"),
+        meta: {
+          title: "欢迎页",
+        },
+        component: () => import("./../views/Welcome.vue"),
       },
     ],
+  },
+  {
+    path: "/login",
+    meta: {
+      title: "登录",
+    },
+    component: () => import("./../views/Login.vue"),
   },
 ]
 const router = createRouter({

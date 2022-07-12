@@ -4,6 +4,7 @@
 import axios from "axios"
 import config from "./../config/index"
 import { ElMessage } from "element-plus"
+import storage from "./storage"
 import router from "../router"
 const TOKEN_INVALID = "token认证失败，请重新登录！"
 const NEXTWORK_ERROR = "网络异常，请稍后重试！"
@@ -15,7 +16,8 @@ const service = axios.create({
 // axios请求拦截
 service.interceptors.request.use(req => {
   const headers = req.headers
-  if (!headers.Authorization) headers.Authorization = "Bear jack"
+  const { token } = storage.getItem("userInfo")
+  if (!headers.Authorization) headers.Authorization = "Bearer " + token
   return req
 })
 // axios响应拦截
@@ -23,7 +25,7 @@ service.interceptors.response.use(res => {
   const { code, data, msg } = res.data
   if (code === 200) {
     return data
-  } else if (code === 40001) {
+  } else if (code === 500001) {
     ElMessage.error(TOKEN_INVALID)
     setTimeout(() => {
       router.push("/login")
@@ -43,6 +45,9 @@ function request(options) {
   if (options.method.toLowerCase() === "get") {
     // 封装get请求自动将data 转为params
     options.params = options.data
+  }
+  if (typeof options.mock !== "undefined") {
+    config.mock = options.mock
   }
   if (config.env === "production") {
     // 防止生产模式访问mock接口

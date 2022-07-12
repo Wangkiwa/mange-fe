@@ -1,0 +1,26 @@
+<template>
+  <el-breadcrumb separator="/">
+    <el-breadcrumb-item v-for="(item, index) in breadList" :key="item.path">
+      <router-link v-if="index === 0" to="/welcome">
+        {{ item.meta.title }}
+      </router-link>
+      <span v-else>{{ item.meta.title }}</span>
+    </el-breadcrumb-item>
+  </el-breadcrumb>
+</template>
+
+<script>
+  export default {
+    name: "BreadCrumd",
+    computed: {
+      breadList() {
+        return this.$route.matched
+      },
+    },
+    mounted() {
+      console.log(this.$route)
+    },
+  }
+</script>
+
+<style></style>
