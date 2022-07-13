@@ -16,6 +16,13 @@ const routes = [
         },
         component: () => import("./../views/Welcome.vue"),
       },
+      {
+        path: "/system/user",
+        meta: {
+          title: "用户管理",
+        },
+        component: () => import("./../views/User.vue"),
+      },
     ],
   },
   {

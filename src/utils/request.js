@@ -23,13 +23,13 @@ service.interceptors.request.use(req => {
 // axios响应拦截
 service.interceptors.response.use(res => {
   const { code, data, msg } = res.data
-  if (code === 200) {
+  if (code == 200) {
     return data
-  } else if (code === 500001) {
+  } else if (code == 500001) {
     ElMessage.error(TOKEN_INVALID)
     setTimeout(() => {
       router.push("/login")
-    }, 15000)
+    }, 1500)
     return Promise.reject(TOKEN_INVALID)
   } else {
     ElMessage.error(msg || NEXTWORK_ERROR)
@@ -46,14 +46,15 @@ function request(options) {
     // 封装get请求自动将data 转为params
     options.params = options.data
   }
+  let isMock = config.mock
   if (typeof options.mock !== "undefined") {
-    config.mock = options.mock
+    isMock = options.mock
   }
   if (config.env === "production") {
     // 防止生产模式访问mock接口
     service.defaults.baseURL = config.baseApi
   } else {
-    service.defaults.baseURL = config.mock ? config.mockApi : config.baseApi
+    service.defaults.baseURL = isMock ? config.mockApi : config.baseApi
   }
   return service(options)
 }

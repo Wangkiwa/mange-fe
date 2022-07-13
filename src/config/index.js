@@ -2,7 +2,7 @@
   环境变量配置封装
 */
 // 开发模式
-const env = import.meta.env.MODE || "prod"
+const env = import.meta.env.MODE || "production"
 const EnvConfig = {
   // 开发环境
   development: {

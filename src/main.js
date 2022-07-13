@@ -4,11 +4,11 @@ import ElementPlus from "element-plus"
 import "element-plus/dist/index.css"
 import router from "./router"
 import request from "./utils/request"
-console.log("环境=", import.meta.env)
 import storage from "./utils/storage"
 import * as ElementPlusIconsVue from "@element-plus/icons-vue"
 import api from "./api"
 import store from "./store"
+import dayjs from "dayjs"
 const app = createApp(App)
 // icon组件
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
@@ -21,7 +21,9 @@ app.config.globalProperties.$request = request
 app.config.globalProperties.$storage = storage
 // 挂载api
 app.config.globalProperties.$api = api
-app.use(ElementPlus)
+// dayjs挂载
+app.config.globalProperties.$dayjs = dayjs
+app.use(ElementPlus, { size: "small" })
 app.use(router)
 app.use(store)
 app.mount("#app")
