@@ -22,12 +22,12 @@ export default {
     })
   },
   // 菜单列表
-  getMenuList() {
+  getMenuList(params) {
     return request({
       url: "/menu/list",
       method: "get",
-      data: {},
-      mock: true,
+      data: params,
+      mock: false,
     })
   },
   // 获取用户列表
@@ -36,7 +36,7 @@ export default {
       url: "/users/list",
       method: "get",
       data: params,
-      mock: false,
+      mock: true,
     })
   },
   // 删除用户
@@ -45,11 +45,11 @@ export default {
       url: "/users/delete",
       method: "post",
       data: params,
-      mock: false,
+      mock: true,
     })
   },
   // 角色列表
-  getRoleList() {
+  getRoleAllList() {
     return request({
       url: "/roles/allList",
       method: "get",
@@ -70,6 +70,15 @@ export default {
   userSubmit(params) {
     return request({
       url: "/users/operate",
+      method: "post",
+      data: params,
+      mock: true,
+    })
+  },
+  // 菜单新增
+  menuSubmit(params) {
+    return request({
+      url: "/menu/operate",
       method: "post",
       data: params,
       mock: false,

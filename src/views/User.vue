@@ -141,7 +141,7 @@
   export default {
     // setup语法糖---Composition API
     setup() {
-      const { ctx, proxy } = getCurrentInstance()
+      const { proxy } = getCurrentInstance()
       // 用户信息
       const user = reactive({
         state: 1,
@@ -154,7 +154,7 @@
         state: 3,
       })
       let showModal = ref(false)
-      // 表格头部数据
+      // 表格列数据
       const columns = reactive([
         {
           label: "用户ID",
@@ -238,7 +238,7 @@
       })
       onMounted(() => {
         getUserList()
-        getRoleList()
+        getRoleAllList()
         getDeptList()
       })
       // 获取用户列表
@@ -301,8 +301,8 @@
         deptList.value = list
       }
       // 角色列表查询
-      const getRoleList = async () => {
-        let res = await proxy.$api.getRoleList()
+      const getRoleAllList = async () => {
+        let res = await proxy.$api.getRoleAllList()
         roleList.push(...res)
       }
       // Dislog取消
@@ -318,7 +318,6 @@
             params.userEmail += "@imooc.com"
             params.action = action.value
             let res = await proxy.$api.userSubmit(params)
-            console.log(res, "@@")
             if (res) {
               showModal.value = false
               proxy.$message.success("新增用户成功！")
@@ -362,7 +361,7 @@
         handlePatchDel,
         handleSelectionChange,
         handleCreate,
-        getRoleList,
+        getRoleAllList,
         getDeptList,
         handleClose,
         handleSubmit,
