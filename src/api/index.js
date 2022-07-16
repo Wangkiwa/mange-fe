@@ -36,7 +36,7 @@ export default {
       url: "/users/list",
       method: "get",
       data: params,
-      mock: true,
+      mock: false,
     })
   },
   // 删除用户
@@ -45,7 +45,7 @@ export default {
       url: "/users/delete",
       method: "post",
       data: params,
-      mock: true,
+      mock: false,
     })
   },
   // 角色列表
@@ -54,7 +54,7 @@ export default {
       url: "/roles/allList",
       method: "get",
       data: {},
-      mock: true,
+      mock: false,
     })
   },
   // 部门列表
@@ -79,6 +79,33 @@ export default {
   menuSubmit(params) {
     return request({
       url: "/menu/operate",
+      method: "post",
+      data: params,
+      mock: false,
+    })
+  },
+  // 角色菜单
+  getRoleList(params) {
+    return request({
+      url: "/roles/list",
+      method: "get",
+      data: params,
+      mock: false,
+    })
+  },
+  // 角色列表
+  rolesSubmit(params) {
+    return request({
+      url: "/roles/operate",
+      method: "post",
+      data: params,
+      mock: false,
+    })
+  },
+  // 角色权限修改
+  updatePermission(params) {
+    return request({
+      url: "/roles/update/permission",
       method: "post",
       data: params,
       mock: false,

@@ -72,7 +72,6 @@
           v-model="menuForm.parentId"
           :options="menuList"
           :props="{ checkStrictly: true, value: '_id', label: 'menuName' }"
-          @change="handleChange"
           clearable
         />
         <span>不选，则直接创建一级菜单</span>
@@ -228,7 +227,6 @@
       async getMenuList() {
         let list = await this.$api.getMenuList(this.queryForm)
         this.menuList = list
-        console.log(list)
       },
       // 查询按钮
       handleQuery() {
