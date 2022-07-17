@@ -39,6 +39,15 @@ export default {
       mock: false,
     })
   },
+  // 获取所有用户列表
+  getAllUserList(params) {
+    return request({
+      url: "/users/all/list",
+      method: "get",
+      data: params,
+      mock: false,
+    })
+  },
   // 删除用户
   userDel(params) {
     return request({
@@ -58,12 +67,21 @@ export default {
     })
   },
   // 部门列表
-  getDeptList() {
+  getDeptList(prams) {
     return request({
       url: "/dept/list",
       method: "get",
-      data: {},
-      mock: true,
+      data: prams,
+      mock: false,
+    })
+  },
+  // 部门列表
+  deptOperate(prams) {
+    return request({
+      url: "/dept/operate",
+      method: "post",
+      data: prams,
+      mock: false,
     })
   },
   // 新增用户
