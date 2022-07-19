@@ -7,4 +7,12 @@ export default {
     state.userInfo = userInfo
     storage.setItem("userInfo", userInfo)
   },
+  saveUserMenu(state, menList) {
+    state.menList = menList
+    storage.setItem("menList", menList)
+  },
+  saveUserAction(state, actionList) {
+    state.actionList = actionList
+    storage.setItem("actionList", actionList)
+  },
 }

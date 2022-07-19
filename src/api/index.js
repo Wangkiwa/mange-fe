@@ -30,6 +30,14 @@ export default {
       mock: false,
     })
   },
+  getPermissionList(params) {
+    return request({
+      url: "users/getPermissionList",
+      method: "get",
+      data: params,
+      mock: false,
+    })
+  },
   // 获取用户列表
   getUserList(params) {
     return request({
@@ -90,7 +98,7 @@ export default {
       url: "/users/operate",
       method: "post",
       data: params,
-      mock: true,
+      mock: false,
     })
   },
   // 菜单新增
@@ -124,6 +132,24 @@ export default {
   updatePermission(params) {
     return request({
       url: "/roles/update/permission",
+      method: "post",
+      data: params,
+      mock: false,
+    })
+  },
+  // 申请列表
+  getApplyList(params) {
+    return request({
+      url: "/leave/list",
+      method: "get",
+      data: params,
+      mock: false,
+    })
+  },
+  // 创建申请单
+  leaveOperate(params) {
+    return request({
+      url: "/leave/operate",
       method: "post",
       data: params,
       mock: false,

@@ -14,7 +14,21 @@ const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
-
+// 全局自定义指令
+app.directive("has", {
+  beforeMount: (el, binding) => {
+    // 获取按钮权限
+    let actionList = storage.getItem("actionList")
+    let value = binding.value
+    let hasPermission = actionList.includes(value)
+    // if (!hasPermission) {
+    //   el.style = "display:none"
+    //   setTimeout(() => {
+    //     el.parentNode.removeChild(el)
+    //   }, 0)
+    // }
+  },
+})
 // 挂载封装的axios
 app.config.globalProperties.$request = request
 // 挂载封装的storage
@@ -27,3 +41,4 @@ app.use(ElementPlus, { size: "small" })
 app.use(router)
 app.use(store)
 app.mount("#app")
+console.log(router.getRoutes().filter(route => route.path == "/welcome").length)

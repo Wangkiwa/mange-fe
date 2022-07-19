@@ -30,8 +30,16 @@
   </div>
   <div class="base-table">
     <div class="action">
-      <el-button type="primary" @click="handleCreate">新增</el-button>
-      <el-button type="danger" @click="handlePatchDel">批量删除</el-button>
+      <el-button type="primary" @click="handleCreate" v-has:add="'user-create'">
+        新增
+      </el-button>
+      <el-button
+        type="danger"
+        @click="handlePatchDel"
+        v-has="'user-patch-delete'"
+      >
+        批量删除
+      </el-button>
     </div>
     <el-table
       :data="userList"
@@ -49,10 +57,20 @@
       />
       <el-table-column fixed="right" label="操作" width="150">
         <template #default="scope">
-          <el-button type="primary" size="small" @click="handleEdit(scope.row)">
+          <el-button
+            type="primary"
+            size="small"
+            @click="handleEdit(scope.row)"
+            v-has="'user-edit'"
+          >
             编辑
           </el-button>
-          <el-button type="danger" size="small" @click="handleDel(scope.row)">
+          <el-button
+            type="danger"
+            size="small"
+            @click="handleDel(scope.row)"
+            v-has="'user-delete'"
+          >
             删除
           </el-button>
         </template>
@@ -109,6 +127,7 @@
           multiple
           style="width: 100%"
           placeholder="请选择用户系统角色"
+          @change="current"
         >
           <el-option
             v-for="role in roleList"
@@ -241,6 +260,9 @@
         getRoleAllList()
         getDeptList()
       })
+      const current = value => {
+        userForm.roleList = value
+      }
       // 获取用户列表
       const getUserList = async () => {
         try {
@@ -317,6 +339,7 @@
             let params = toRaw(userForm)
             params.userEmail += "@imooc.com"
             params.action = action.value
+            console.log(params)
             let res = await proxy.$api.userSubmit(params)
             if (res) {
               showModal.value = false
@@ -353,6 +376,7 @@
         roleList,
         deptList,
         action,
+        current,
         getUserList,
         handleQuery,
         handleReset,

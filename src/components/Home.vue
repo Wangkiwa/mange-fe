@@ -83,12 +83,11 @@
       toggle() {
         this.isCollapse = !this.isCollapse
       },
-      // 下拉菜钩子
+      // 下拉菜单钩子
       handleLogout(key) {
-        console.log(key)
         if (key == "email") return
         this.$store.commit("saveUserInfo", "")
-        this.userInfo = null
+        this.userInfo = {}
         this.$router.push("/login")
       },
       // 通知数量
@@ -98,8 +97,10 @@
       },
       // 菜单数据
       async getMenuList() {
-        const userMenu = await this.$api.getMenuList()
-        this.userMenu = userMenu
+        const { menuList, actionList } = await this.$api.getPermissionList()
+        this.userMenu = menuList
+        this.$store.commit("saveUserMenu", menuList)
+        this.$store.commit("saveUserAction", actionList)
       },
     },
     components: { TreeMenu, BreadCrumd },
