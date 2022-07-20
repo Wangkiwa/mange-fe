@@ -1,3 +1,8 @@
+/*
+ * @Descripttion:
+ * @Author: TaoWang
+ * @Date: 2022-07-07 22:09:56
+ */
 import { createApp } from "vue"
 import App from "./App.vue"
 import ElementPlus from "element-plus"
@@ -41,4 +46,3 @@ app.use(ElementPlus, { size: "small" })
 app.use(router)
 app.use(store)
 app.mount("#app")
-console.log(router.getRoutes().filter(route => route.path == "/welcome").length)

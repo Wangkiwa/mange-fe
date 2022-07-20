@@ -23,16 +23,14 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleQuery">查询</el-button>
+          <el-button type="primary" @click="getApplyList">查询</el-button>
           <el-button @click="handleReset('userListform')">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
   </div>
   <div class="base-table">
-    <div class="action">
-      <el-button type="primary" @click="handleApply">申请休假</el-button>
-    </div>
+    <div class="action"></div>
     <el-table :data="applyList" style="width: 100%">
       <el-table-column
         v-for="item in columns"
@@ -45,15 +43,7 @@
       <el-table-column fixed="right" label="操作" width="150">
         <template #default="scope">
           <el-button type="primary" size="small" @click="handleDetail(scope.row)">
-            查看
-          </el-button>
-          <el-button
-            v-if="[1, 2].includes(scope.row.applyState)"
-            type="danger"
-            size="small"
-            @click="handleDelete(scope.row._id)"
-          >
-            作废
+            审核
           </el-button>
         </template>
       </el-table-column>
@@ -68,69 +58,19 @@
       @current-change="handleCurrentChange"
     />
   </div>
-  <!-- 休假申请DiaLog -->
-  <el-dialog title="申请休假" v-model="showModal" width="70%">
-    <el-form ref="dialogForm" :model="leaveForm" label-width="120px" :rules="rules">
-      <el-form-item label="休假申请" prop="applyType" required>
-        <el-select v-model="leaveForm.applyType">
-          <el-option :value="1" label="事假"></el-option>
-          <el-option :value="2" label="调休"></el-option>
-          <el-option :value="3" label="年假"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="休假时间" required>
-        <el-row>
-          <el-col :span="6">
-            <el-form-item prop="startTime">
-              <el-date-picker
-                v-model="leaveForm.startTime"
-                type="date"
-                placeholder="选择开始时间"
-                @change="(val) => handleDateChange('startTime', val)"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="1">-</el-col>
-          <el-col :span="7">
-            <el-form-item prop="endTime">
-              <el-date-picker
-                v-model="leaveForm.endTime"
-                type="date"
-                placeholder="选择结束时间"
-                @change="(val) => handleDateChange('endTime', val)"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form-item>
-      <el-form-item label="休假时长" prop="leaveTime" required>
-        {{ leaveForm.leaveTime }}
-      </el-form-item>
-      <el-form-item label="休假原因" prop="reasons" required>
-        <el-input
-          type="textarea"
-          :rows="3"
-          placeholder="请输入休假原因"
-          v-model="leaveForm.reasons"
-        />
-      </el-form-item>
-    </el-form>
-    <!-- 弹框按钮 -->
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="handleSubmit">确 定</el-button>
-      </span>
-    </template>
-  </el-dialog>
+
   <!-- 步骤弹窗 -->
-  <el-dialog title="申请休假详情" v-model="showDetailModal" width="50%">
-    <el-steps :active="detail.applyState > 2 ? 3 : detail.applyState" align-center>
-      <el-step title="待审批"></el-step>
-      <el-step title="审批中"></el-step>
-      <el-step title="审批拒绝/通过"></el-step>
-    </el-steps>
-    <el-form label-width="120px" label-suffix=":">
+  <el-dialog title="审核" v-model="showDetailModal" width="50%">
+    <el-form
+      ref="dialogForm"
+      :model="auditForm"
+      label-width="120px"
+      label-suffix=":"
+      :rules="rules"
+    >
+      <el-form-item label="申请人">
+        <div>{{ detail.applyUser.userName }}</div>
+      </el-form-item>
       <el-form-item label="休假类型">
         <div>{{ detail.applyTypeName }}</div>
       </el-form-item>
@@ -149,7 +89,21 @@
       <el-form-item label="审批人">
         <div>{{ detail.curAuditUserName }}</div>
       </el-form-item>
+      <el-form-item label="备注信息" prop="remark">
+        <el-input
+          type="textarea"
+          :rows="3"
+          placeholder="请输入审核备注"
+          v-model="auditForm.remark"
+        ></el-input>
+      </el-form-item>
     </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button type="primary" @click="handleApprove('pass')"> 审核通过 </el-button>
+        <el-button @click="handleApprove('refuse')">驳回</el-button>
+      </span>
+    </template>
   </el-dialog>
 </template>
 
@@ -165,6 +119,13 @@ export default {
       {
         label: "单号",
         prop: "orderNo",
+      },
+      {
+        label: "申请人",
+        prop: "applyUser",
+        formatter(row) {
+          return row.applyUser.userName;
+        },
       },
       {
         label: "休假时间",
@@ -239,12 +200,10 @@ export default {
     // 申请列表数据
     const applyList = ref([]);
     // 显示Dialog对话框
-    const showModal = ref(false);
     const showDetailModal = ref(false);
-    // create编辑/delete作废
-    const action = ref("create");
-    // 步骤条数据
+    // 详情弹框
     const detail = ref({});
+    const userInfo = proxy.$store.state.userInfo;
     // 休假申请数据
     const leaveForm = reactive({
       applyType: 1,
@@ -253,33 +212,14 @@ export default {
       leaveTime: "0天",
       reasons: "",
     });
+    const auditForm = reactive({
+      remark: "",
+    });
     const rules = reactive({
-      applyType: [
+      remark: [
         {
           required: true,
-          trigger: "blur",
-        },
-      ],
-      startTime: [
-        {
-          type: "date",
-          required: true,
-          message: "请选择开始时间",
-          trigger: "change",
-        },
-      ],
-      endTime: [
-        {
-          type: "date",
-          required: true,
-          message: "请选择结束时间",
-          trigger: "change",
-        },
-      ],
-      reasons: [
-        {
-          required: true,
-          message: "请输入休假原因",
+          message: "请输入审核备注",
           trigger: ["blur", "change"],
         },
       ],
@@ -289,7 +229,7 @@ export default {
     });
     // 初始化申请列表
     const getApplyList = async () => {
-      let params = { ...queryForm, ...pager };
+      let params = { ...queryForm, ...pager, type: "approve" };
       let { list, page } = await proxy.$api.getApplyList(params);
       applyList.value = list;
       pager.total = page.total;
@@ -297,42 +237,6 @@ export default {
     // 顶部重置
     const handleReset = (form) => {
       proxy.$refs[form].resetFields();
-    };
-    // 点击申请休假
-    const handleApply = () => {
-      showModal.value = true;
-      action.value = "create";
-    };
-    // 申请休假Dialog关闭
-    const handleClose = () => {
-      showModal.value = false;
-      handleReset("dialogForm");
-    };
-    // 申请休假提交
-    const handleSubmit = () => {
-      proxy.$refs.dialogForm.validate(async (valid) => {
-        if (valid) {
-          const params = { ...leaveForm, action: action.value };
-          const res = await proxy.$api.leaveOperate(params);
-          handleClose();
-          getApplyList();
-          proxy.$message.success("申请成功！");
-        }
-      });
-    };
-    //  休假时长
-    const handleDateChange = (time, val) => {
-      const { startTime, endTime } = leaveForm;
-      if (!startTime || !endTime) return;
-      if (startTime > endTime) {
-        proxy.$message.error("申假时间必须大于1天");
-        leaveForm.leaveTime = "0天";
-        setTimeout(() => {
-          leaveForm[time] = "";
-        }, 0);
-      } else {
-        leaveForm.leaveTime = (endTime - startTime) / 24 / 60 / 60 / 1000 + 1 + "天";
-      }
     };
     // 查看休假申请
     const handleDetail = (row) => {
@@ -356,32 +260,43 @@ export default {
       detail.value = data;
       showDetailModal.value = true;
     };
-    // 休假作废
-    const handleDelete = async (_id) => {
-      const params = { _id, action: "delete" };
-      const res = await proxy.$api.leaveOperate(params);
-      proxy.$message.success("删除成功！");
-      getApplyList();
+    const handleClose = () => {
+      showDetailModal.value = false;
+      handleReset("dialogForm");
+    };
+    // 审核通过/驳回
+    const handleApprove = (action) => {
+      proxy.$refs.dialogForm.validate(async (valid) => {
+        if (valid) {
+          let params = {
+            action,
+            remark: auditForm.remark,
+            _id: detail.value._id,
+          };
+          let res = await proxy.$api.leaveApprove(params);
+          handleClose();
+          proxy.$message.success("处理成功");
+          proxy.$store.commit("saveNoticeCount", proxy.$store.state.noticeCount - 1);
+          getApplyList();
+        }
+      });
     };
     return {
       columns,
       pager,
       queryForm,
       applyList,
-      showModal,
       leaveForm,
-      action,
       rules,
       showDetailModal,
       detail,
-      handleApply,
+      userInfo,
+      auditForm,
       handleReset,
-      getApplyList,
       handleClose,
-      handleSubmit,
-      handleDateChange,
+      getApplyList,
       handleDetail,
-      handleDelete,
+      handleApprove,
     };
   },
 };

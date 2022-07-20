@@ -13,12 +13,12 @@ export default {
     })
   },
   // 通知数量
-  noticeCount() {
+  noticeCount(params) {
     return request({
-      url: "/leave/count",
+      url: "/leave/counts",
       method: "get",
-      data: {},
-      mock: true,
+      data: params,
+      mock: false,
     })
   },
   // 菜单列表
@@ -150,6 +150,15 @@ export default {
   leaveOperate(params) {
     return request({
       url: "/leave/operate",
+      method: "post",
+      data: params,
+      mock: false,
+    })
+  },
+  // 审核
+  leaveApprove(params) {
+    return request({
+      url: "/leave/approve",
       method: "post",
       data: params,
       mock: false,

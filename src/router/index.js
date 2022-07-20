@@ -52,6 +52,13 @@ const routes = [
         },
         component: () => import("../views/Leave.vue"),
       },
+      {
+        path: "/audit/approve",
+        meta: {
+          title: "待审批",
+        },
+        component: () => import("../views/Approval.vue"),
+      },
     ],
   },
   {
@@ -70,7 +77,7 @@ const routes = [
   },
 ]
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHashHistory(), //哈希路由
   routes,
 })
 // 判断路径是否合法

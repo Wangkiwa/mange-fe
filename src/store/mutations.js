@@ -1,3 +1,8 @@
+/*
+ * @Descripttion:
+ * @Author: TaoWang
+ * @Date: 2022-07-10 09:33:57
+ */
 /* 
   mutations数据提交
 */
@@ -14,5 +19,9 @@ export default {
   saveUserAction(state, actionList) {
     state.actionList = actionList
     storage.setItem("actionList", actionList)
+  },
+  saveNoticeCount(state, noticeCount) {
+    state.noticeCount = noticeCount
+    storage.setItem("noticeCount", noticeCount)
   },
 }
